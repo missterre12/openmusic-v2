@@ -12,11 +12,7 @@ class SongsService {
   async addSong({
     title, year, genre, performer, duration, albumId,
   }) {
-<<<<<<< HEAD
-    const id = `song-${nanoid(16)}`;
-=======
     const id = nanoid(16);
->>>>>>> de9a78b3570f4fe59bfa05ac0df35b5f95e6ed13
     const query = {
       text: 'INSERT INTO songs(id, title, year, genre, performer, duration, album_id) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id',
       values: [id, title, year, genre, performer, duration, albumId],
@@ -90,12 +86,7 @@ class SongsService {
       text: query,
       values: [`%${title}%`, `%${performer}%`],
     });
-
-<<<<<<< HEAD
-    return result.rows;
-=======
     return result.rows.map(mapDBToModelSong);
->>>>>>> de9a78b3570f4fe59bfa05ac0df35b5f95e6ed13
   }
 }
 

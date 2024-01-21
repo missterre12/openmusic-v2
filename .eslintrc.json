@@ -13,7 +13,7 @@
         "no-console": "off",
         "linebreak-style": 0,
         "no-underscore-dangle": "off",
-        "indent": ["error", 2],
+        "indent": ["error", 2, 4],
         "no-shadow":"off"
     }
 }

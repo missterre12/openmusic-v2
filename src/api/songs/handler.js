@@ -141,8 +141,4 @@ class SongsHandler {
     return successResponse;
   }
 }
-<<<<<<< HEAD
 module.exports = SongsHandler;
-=======
-module.exports = SongsHandler;
->>>>>>> de9a78b3570f4fe59bfa05ac0df35b5f95e6ed13
