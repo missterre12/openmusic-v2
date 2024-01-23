@@ -54,10 +54,10 @@ class PlaylistsService {
                 )
                 ORDER BY songs.title ASC
                 ) songs
-            FROM playlist_songs
-            INNER JOIN playlists ON playlist_songs.playlist_id = playlists.id
+            FROM playlists_songs
+            INNER JOIN playlists ON playlists_songs.playlist_id = playlists.id
             INNER JOIN users ON playlists.owner = users.id
-            INNER JOIN songs ON playlist_songs.song_id = songs.id
+            INNER JOIN songs ON playlists_songs.song_id = songs.id
             WHERE playlist_id = $1
             GROUP BY playlists.id, users.username`,
             values: [id],
@@ -87,7 +87,7 @@ class PlaylistsService {
         const id = nanoid(16);
 
         const query = {
-            text: 'INSERT INTO playlist_songs VALUES($1, $2, $3) RETURNING id', 
+            text: 'INSERT INTO playlists_songs VALUES($1, $2, $3) RETURNING id', 
             values: [id, playlistId, songId],
         };
 
@@ -101,7 +101,7 @@ class PlaylistsService {
 
     async deletePlaylistSongById(playlistId, songId) {
         const query = {
-            text: 'DELETE FROM playlist_songs WHERE playlist_id = $1 AND song_id = $2 RETURNING id',
+            text: 'DELETE FROM playlists_songs WHERE playlist_id = $1 AND song_id = $2 RETURNING id',
             values: [playlistId, songId],
         };
 

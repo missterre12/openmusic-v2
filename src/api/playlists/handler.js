@@ -55,14 +55,14 @@ class PlaylistsHandler {
     }
 
     async postPlaylistSongsByIdHandler(request, h) {
-        this._validator.validatePlaylistSongByIdPayload(request.payload);
+        this._validator.validatePlaylistSongPayload(request.payload);
         const { id: playlistId } = request.params;
         const { songId } = request.payload;
         const { id: owner } = request.auth.credentials;
 
         await this._service.verifyPlaylistOwner(playlistId, owner);
         await this._service.verifySongIsExist(songId);
-        await this._service.addPlaylistSong(playlistId, songId);
+        await this._service.addPlaylistsSong(playlistId, songId);
 
         const response = h.response({
             status: 'success',
@@ -87,13 +87,13 @@ class PlaylistsHandler {
     }
 
     async deletePlaylistSongsByIdHandler(request, h) {
-        this._validator.validatePlaylistSongByIdPayload(request.payload);
+        this._validator.validatePlaylistSongPayload(request.payload);
         const { id: playlistId } = request.params;
         const { songId } = request.payload;
         const { id: owner } = request.auth.credentials;
 
         await this._service.verifyPlaylistOwner(playlistId, owner);
-        await this._service.deletePlaylistSongsById(playlistId, songId);
+        await this._service.deletePlaylistSongById(playlistId, songId);
 
         return {
             status: 'success',
