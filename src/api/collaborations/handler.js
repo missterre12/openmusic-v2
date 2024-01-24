@@ -41,6 +41,20 @@ class CollaborationsHandler {
             message: 'Kolaborasi berhasil dihapus',
         };
     }
+
+    async getCollaborationActivitiesHandler(request, h) {
+        const { id: playlistId } = request.params;
+        const activities = await this._collaborationsService.getCollaborationActivities(playlistId);
+        
+        return {
+          status: 'success',
+          data: {
+            playlistId,
+            activities,
+          },
+        };
+      }
+      
 }
 
 module.exports = CollaborationsHandler;

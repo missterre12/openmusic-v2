@@ -48,6 +48,26 @@ class CollaborationsService {
       throw new InvariantError('Kolaborasi gagal diverifikasi');
     }
   }
+
+  async getCollaborationActivities(playlistId) {
+    const query = {
+        text: 'SELECT * FROM collaboration_activities WHERE playlist_id = $1',
+        values: [playlistId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rows.length) {
+        return []; // Return an empty array if no activities are found
+    }
+
+    return result.rows.map((row) => ({
+        username: row.username,
+        title: row.title,
+        action: row.action,
+        time: row.time,
+    }));
+}
 }
 
 module.exports = CollaborationsService;
