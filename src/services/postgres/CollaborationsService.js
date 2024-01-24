@@ -58,7 +58,7 @@ class CollaborationsService {
     const result = await this._pool.query(query);
 
     if (!result.rows.length) {
-        return []; // Return an empty array if no activities are found
+        return [];
     }
 
     return result.rows.map((row) => ({
@@ -67,7 +67,7 @@ class CollaborationsService {
         action: row.action,
         time: row.time,
     }));
-}
+  }
 }
 
 module.exports = CollaborationsService;
