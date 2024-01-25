@@ -120,18 +120,22 @@ class PlaylistsService {
             text: 'SELECT * FROM playlists WHERE id = $1',
             values: [playlistId],
         };
-
+    
         const result = await this._pool.query(query);
-
+    
         if (!result.rows.length) {
-            throw new NotFoundError('Playlist tidak ditemukan');
+            const error = new NotFoundError('Playlist tidak ditemukan');
+            throw Object.assign(error, { statusCode: 404 });
         }
-
+    
         const playlist = result.rows[0];
-
+    
         if (playlist.owner !== owner) {
-            throw new AuthorizationError('Anda tidak berhak mengakses');
+            const error = new AuthorizationError('Anda tidak berhak mengakses');
+            throw Object.assign(error, { statusCode: 403 });
         }
+    
+        return true; 
     }
 
     async verifySongIsExist(songId) {
