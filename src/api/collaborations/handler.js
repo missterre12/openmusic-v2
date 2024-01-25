@@ -44,11 +44,11 @@ class CollaborationsHandler {
     async getCollaborationActivitiesHandler(request, h) {
         const { id: playlistId } = request.params;
     
-        const playlistExists = await this._playlistService.verifyPlaylistExists(playlistId);
+        const playlistExists = await this._playlistService.verifyPlaylistOwner(playlistId, request.auth.credentials.id);
     
         if (playlistExists) {
             const activities = await this._collaborationsService.getCollaborationActivities(playlistId);
-
+    
             return {
                 status: 'success',
                 data: {
@@ -62,7 +62,7 @@ class CollaborationsHandler {
                 message: 'Forbidden',
             }).code(403);
         }
-    }
+    }    
 }
 
 module.exports = CollaborationsHandler;
