@@ -44,22 +44,25 @@ class CollaborationsHandler {
     async getCollaborationActivitiesHandler(request, h) {
         const { id: playlistId } = request.params;
     
-        const playlistExists = await this._playlistService.verifyPlaylistExists(playlistId); // <-- Corrected
+        const playlistExists = await this._playlistService.verifyPlaylistExists(playlistId);
     
-        if (!playlistExists) {
-            throw new NotFoundError('Playlist not found');
+        if (playlistExists) {
+            const activities = await this._collaborationsService.getCollaborationActivities(playlistId);
+
+            return {
+                status: 'success',
+                data: {
+                    playlistId,
+                    activities,
+                },
+            };
+        } else {
+            return h.response({
+                status: 'fail',
+                message: 'Forbidden',
+            }).code(403);
         }
-    
-        const activities = await this._collaborationsService.getCollaborationActivities(playlistId);
-    
-        return {
-            status: 'success',
-            data: {
-                playlistId,
-                activities,
-            },
-        };
-    }    
+    }
 }
 
 module.exports = CollaborationsHandler;

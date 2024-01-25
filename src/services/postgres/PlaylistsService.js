@@ -139,12 +139,28 @@ class PlaylistsService {
     }
 
     async verifyPlaylistAccess(playlistId, userId) {
-        try {
-            await this.verifyPlaylistOwner(playlistId, userId);
-        } catch (error) {
-            if (error instanceof NotFoundError) {
-                throw error;
-            }
+        const playlist = await this._pool.query({
+            text: 'SELECT owner FROM playlists WHERE id = $1',
+            values: [playlistId],
+        });
+    
+        if (playlist.rows.length === 0) {
+            throw new NotFoundError('Playlist tidak ditemukan');
+        }
+    
+        if (playlist.rows[0].owner !== userId) {
+            throw new AuthorizationError('Anda tidak berhak mengakses');
+        }
+    }    
+
+    async verifyPlaylistExists(playlistId) {
+        const query = {
+            text: 'SELECT * FROM playlists WHERE id = $1',
+            values: [playlistId],
+        };
+        const result = await this._pool.query(query);
+        if (!result.rows.length) {
+            throw new NotFoundError('Playlist tidak ditemukan');
         }
     }
 }
