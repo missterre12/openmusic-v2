@@ -4,10 +4,12 @@ const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
 const AuthorizationError = require('../../exceptions/AuthorizationError');
 const { mapDBToModelPlaylists } = require('../../utils');
+const CollaborationsService = require('../../services/postgres/CollaborationsService');
 
 class PlaylistsService {
     constructor() {
         this._pool = new Pool();
+        this._collaborationsService = new CollaborationsService();
     }
 
     async addPlaylists({ name, owner }) {
@@ -134,7 +136,6 @@ class PlaylistsService {
             const error = new AuthorizationError('Anda tidak berhak mengakses');
             throw Object.assign(error, { statusCode: 403 });
         }
-    
         return true; 
     }
 

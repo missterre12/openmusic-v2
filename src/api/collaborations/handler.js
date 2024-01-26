@@ -13,9 +13,11 @@ class CollaborationsHandler {
         this._validator.validateCollaborationPayload(request.payload);
         const { id: username } = request.auth.credentials;
         const { playlistId, userId } = request.payload;
-
+    
         await this._playlistService.verifyPlaylistOwner(playlistId, username);
         const collaborationId = await this._collaborationsService.addCollaboration(playlistId, userId);
+        
+        await this._collaborationsService.addCollaborationActivity(playlistId, userId, null, 'add');
 
         const response = h.response({
             status: 'success',
@@ -32,15 +34,18 @@ class CollaborationsHandler {
         this._validator.validateCollaborationPayload(request.payload);
         const { id: username } = request.auth.credentials;
         const { playlistId, userId } = request.payload;
-
+    
         await this._playlistService.verifyPlaylistOwner(playlistId, username);
         await this._collaborationsService.deleteCollaboration(playlistId, userId);
+        
+        await this._collaborationsService.deleteCollaborationActivity(playlistId, userId, null, 'delete');
 
         return {
             status: 'success',
             message: 'Kolaborasi berhasil dihapus',
         };
     }
+
     async getCollaborationActivitiesHandler(request, h) {
         const { id: playlistId } = request.params;
     

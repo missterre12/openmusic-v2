@@ -68,6 +68,35 @@ class CollaborationsService {
         time: row.time,
     }));
   }
+
+  async addCollaborationActivity(playlistId, userId, songTitle, action) {
+    const query = {
+        text: 'INSERT INTO collaboration_activities (playlist_id, user_id, title, action, time) VALUES ($1, $2, $3, $4, NOW()) RETURNING id',
+        values: [playlistId, userId, songTitle, action],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rows.length) {
+        throw new InvariantError('Aktivitas kolaborasi gagal ditambahkan');
+    }
+
+    return result.rows[0].id;
+}
+
+async deleteCollaborationActivity(playlistId, userId, songTitle, action) {
+  const query = {
+      text: 'DELETE FROM collaboration_activities WHERE playlist_id = $1 AND user_id = $2 AND title = $3 AND action = $4 RETURNING id',
+      values: [playlistId, userId, songTitle, action],
+  };
+
+  const result = await this._pool.query(query);
+
+  if (!result.rows.length) {
+      throw new InvariantError('Aktivitas kolaborasi gagal dihapus');
+  }
+}
+
 }
 
 module.exports = CollaborationsService;
