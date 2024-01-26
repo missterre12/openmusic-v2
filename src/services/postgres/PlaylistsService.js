@@ -167,19 +167,6 @@ class PlaylistsService {
 
         return playlist.owner === userId;
     }
-
-    // async verifyPlaylistExists(playlistId) {
-    //     const query = {
-    //         text: 'SELECT * FROM playlists WHERE id = $1',
-    //         values: [playlistId],
-    //     };
-
-    //     const result = await this._pool.query(query);
-
-    //     if (!result.rows.length) {
-    //         throw new NotFoundError('Playlist tidak ditemukan');
-    //     }
-    // }
 }
 
 module.exports = PlaylistsService;
