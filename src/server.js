@@ -105,6 +105,7 @@ const init = async () => {
       plugin: playlists,
       options: {
         service: playlistsService,
+        collaborationsService,
         validator: PlaylistsValidator, 
       },
     },    
@@ -136,7 +137,7 @@ const init = async () => {
         const authErrorResponse = h.response({
           status: 'fail',
           message: response.message,
-          errorCode: 403,  // <-- Ini diubah menjadi 403 untuk AuthorizationError
+          errorCode: 403,  
         });
         authErrorResponse.code(response.statusCode);
         return authErrorResponse;
