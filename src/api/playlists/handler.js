@@ -102,6 +102,38 @@ class PlaylistsHandler {
             message: 'Playlist song berhasil dihapus',
         };
     }
+
+    async postCollaborationActivityHandler(request, h) {
+        const { id: userId } = request.auth.credentials;
+        const { playlistId, songId, action } = request.payload;
+
+        await this.verifyPlaylistAccess(playlistId, userId);
+        await this._collaborationsService.verifyCollaborator(playlistId, userId);
+
+        await this._collaborationsService.addCollaborationActivity(playlistId, songId, userId, action);
+
+        const response = h.response({
+            status: 'success',
+            message: 'Aktivitas kolaborasi berhasil ditambahkan',
+        });
+        response.code(201);
+        return response;
+    }
+
+    async deleteCollaborationActivityHandler(request, h) {
+        const { id: userId } = request.auth.credentials;
+        const { playlistId, songId, action } = request.payload;
+
+        await this.verifyPlaylistAccess(playlistId, userId);
+        await this._collaborationsService.verifyCollaborator(playlistId, userId);
+
+        await this._collaborationsService.deleteCollaborationActivity(playlistId, songId, userId, action);
+
+        return {
+            status: 'success',
+            message: 'Aktivitas kolaborasi berhasil dihapus',
+        };
+    }
 }
 
 module.exports = PlaylistsHandler;

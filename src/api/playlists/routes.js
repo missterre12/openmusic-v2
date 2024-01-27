@@ -47,6 +47,22 @@ const routes = (handler) => [
             auth: 'openmusic_jwt',
         },
     },
+    {
+        method: 'POST',
+        path: '/playlists/activities',
+        handler: handler.postCollaborationActivityHandler,
+        options: {
+          auth: 'openmusic_jwt',
+        },
+      },
+      {
+        method: 'DELETE',
+        path: '/playlists/activities',
+        handler: handler.deleteCollaborationActivityHandler,
+        options: {
+          auth: 'openmusic_jwt',
+        },
+      },
 ];
 
 module.exports = routes;

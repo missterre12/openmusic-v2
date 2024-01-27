@@ -45,60 +45,19 @@ class CollaborationsHandler {
             message: 'Kolaborasi berhasil dihapus',
         };
     }
-    
+
     async getCollaborationActivitiesHandler(request, h) {
         const { id: playlistId } = request.params;
-    
-        const playlistExists = await this._playlistService.verifyPlaylistOwner(playlistId, request.auth.credentials.id);
-    
-        if (playlistExists) {
-            const activities = await this._collaborationsService.getCollaborationActivities(playlistId);
-    
-            return h.response({
-                status: 'success',
-                data: {
-                    playlistId,
-                    activities,
-                },
-            });
-        } else {
-            return h.response({
-                status: 'fail',
-                message: 'Playlist tidak ditemukan',
-            }).code(404);
-        }
-    }
-    
-    async postCollaborationActivityHandler(request, h) {
-        const { id: userId } = request.auth.credentials;
-        const { playlistId, songId, action } = request.payload;
 
-        await this.verifyPlaylistAccess(playlistId, userId);
-        await this._collaborationsService.verifyCollaborator(playlistId, userId);
+        const activities = await this._collaborationsService.getCollaborationActivities(playlistId);
 
-        await this._collaborationsService.addCollaborationActivity(playlistId, songId, userId, action);
-
-        const response = h.response({
+        return h.response({
             status: 'success',
-            message: 'Aktivitas kolaborasi berhasil ditambahkan',
+            data: {
+            playlistId,
+            activities,
+            },
         });
-        response.code(201);
-        return response;
-    }
-
-    async deleteCollaborationActivityHandler(request, h) {
-        const { id: userId } = request.auth.credentials;
-        const { playlistId, songId, action } = request.payload;
-
-        await this.verifyPlaylistAccess(playlistId, userId);
-        await this._collaborationsService.verifyCollaborator(playlistId, userId);
-
-        await this._collaborationsService.deleteCollaborationActivity(playlistId, songId, userId, action);
-
-        return {
-            status: 'success',
-            message: 'Aktivitas kolaborasi berhasil dihapus',
-        };
     }
 }
 
