@@ -119,17 +119,23 @@ class PlaylistsService {
 
     async verifyPlaylistOwner(playlistId, owner) {
         const query = {
-            text: 'SELECT * FROM playlists WHERE id = $1 AND owner = $2',
-            values: [playlistId, owner],
+            text: 'SELECT * FROM playlists WHERE id = $1',
+            values: [playlistId],
         };
     
         const result = await this._pool.query(query);
     
         if (result.rows.length === 0) {
-            throw new AuthorizationError('You are not authorized to modify this playlist', 404); // Memberikan kode identifikasi 404
+            throw new NotFoundError('Playlist not found', 404);
+        }
+    
+        const playlist = result.rows[0];
+    
+        if (playlist.owner !== owner) {
+            throw new AuthorizationError('You are not authorized to modify this playlist', 403);
         }
     }
-
+    
     async verifySongIsExist(songId) {
         const query = {
             text: 'SELECT * FROM songs WHERE id = $1',
