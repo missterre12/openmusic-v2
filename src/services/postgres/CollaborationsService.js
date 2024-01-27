@@ -51,7 +51,7 @@ class CollaborationsService {
 
   async getCollaborationActivities(playlistId) {
     const query = {
-        text: 'SELECT * FROM collaboration_activities WHERE playlist_id = $1',
+        text: 'SELECT * FROM playlist_song_activities WHERE playlist_id = $1',
         values: [playlistId],
     };
 
@@ -69,10 +69,10 @@ class CollaborationsService {
     }));
   }
 
-  async addCollaborationActivity(playlistId, userId, songTitle, action) {
+  async addCollaborationActivity(playlistId, songId, userId, action) {
     const query = {
-        text: 'INSERT INTO collaboration_activities (playlist_id, user_id, title, action, time) VALUES ($1, $2, $3, $4, NOW()) RETURNING id',
-        values: [playlistId, userId, songTitle, action],
+        text: 'INSERT INTO playlist_song_activities (playlist_id, song_id, user_id, action, time) VALUES ($1, $2, $3, $4, NOW()) RETURNING id',
+        values: [playlistId, songId, userId, action],
     };
 
     const result = await this._pool.query(query);
@@ -84,10 +84,10 @@ class CollaborationsService {
     return result.rows[0].id;
 }
 
-async deleteCollaborationActivity(playlistId, userId, songTitle, action) {
+async deleteCollaborationActivity(playlistId, songId, userId, action) {
   const query = {
-      text: 'DELETE FROM collaboration_activities WHERE playlist_id = $1 AND user_id = $2 AND title = $3 AND action = $4 RETURNING id',
-      values: [playlistId, userId, songTitle, action],
+      text: 'DELETE FROM playlist_song_activities WHERE playlist_id = $1 AND song_id = $2 AND user_id = $3 AND action = $4 RETURNING id',
+      values: [playlistId, songId, userId, action],
   };
 
   const result = await this._pool.query(query);

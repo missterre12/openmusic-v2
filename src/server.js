@@ -136,6 +136,7 @@ const init = async () => {
         const authErrorResponse = h.response({
           status: 'fail',
           message: response.message,
+          errorCode: 403,  // <-- Ini diubah menjadi 403 untuk AuthorizationError
         });
         authErrorResponse.code(response.statusCode);
         return authErrorResponse;
@@ -149,11 +150,12 @@ const init = async () => {
         newResponse.code(response.statusCode);
         return newResponse;
       }
-
+  
       if (response instanceof NotFoundError) {
         const notFoundResponse = h.response({
           status: 'fail',
           message: response.message,
+          errorCode: 404,
         });
         notFoundResponse.code(response.statusCode);
         return notFoundResponse;

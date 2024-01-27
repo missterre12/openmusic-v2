@@ -16,7 +16,7 @@ class PlaylistsService {
         const id = nanoid(16);
 
         const query = {
-            text: 'INSERT INTO playlists VALUES($1, $2, $3) RETURNING id',
+            text: 'INSERT INTO playlists(id, name, owner) VALUES($1, $2, $3) RETURNING id',
             values: [id, name, owner],
         };
 
@@ -119,24 +119,15 @@ class PlaylistsService {
 
     async verifyPlaylistOwner(playlistId, owner) {
         const query = {
-            text: 'SELECT * FROM playlists WHERE id = $1',
-            values: [playlistId],
+            text: 'SELECT * FROM playlists WHERE id = $1 AND owner = $2',
+            values: [playlistId, owner],
         };
     
         const result = await this._pool.query(query);
     
-        if (!result.rows.length) {
-            const error = new NotFoundError('Playlist tidak ditemukan');
-            throw Object.assign(error, { statusCode: 404 });
+        if (result.rows.length === 0) {
+            throw new AuthorizationError('You are not authorized to modify this playlist', 404); // Memberikan kode identifikasi 404
         }
-    
-        const playlist = result.rows[0];
-    
-        if (playlist.owner !== owner) {
-            const error = new AuthorizationError('Anda tidak berhak mengakses');
-            throw Object.assign(error, { statusCode: 403 });
-        }
-        return true; 
     }
 
     async verifySongIsExist(songId) {
@@ -163,9 +154,7 @@ class PlaylistsService {
         if (result.rows.length === 0) {
             return false;
         }
-
         const playlist = result.rows[0];
-
         return playlist.owner === userId;
     }
 }

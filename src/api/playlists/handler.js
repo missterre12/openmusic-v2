@@ -59,11 +59,11 @@ class PlaylistsHandler {
         const { id: playlistId } = request.params;
         const { songId } = request.payload;
         const { id: owner } = request.auth.credentials;
-
+    
         await this._service.verifyPlaylistOwner(playlistId, owner);
         await this._service.verifySongIsExist(songId);
         await this._service.addPlaylistsSong(playlistId, songId);
-
+    
         const response = h.response({
             status: 'success',
             message: 'Playlist song berhasil ditambahkan',
@@ -75,9 +75,11 @@ class PlaylistsHandler {
     async getPlaylistSongsByIdHandler(request, h) {
         const { id } = request.params;
         const { id: owner } = request.auth.credentials;
-
+    
         await this._service.verifyPlaylistOwner(id, owner);
+    
         const playlist = await this._service.getPlaylistById(id);
+        
         return {
             status: 'success',
             data: {

@@ -16,7 +16,7 @@ class CollaborationsHandler {
     
         await this._playlistService.verifyPlaylistOwner(playlistId, username);
         const collaborationId = await this._collaborationsService.addCollaboration(playlistId, userId);
-        
+
         await this._collaborationsService.addCollaborationActivity(playlistId, userId, null, 'add');
 
         const response = h.response({
@@ -54,19 +54,51 @@ class CollaborationsHandler {
         if (playlistExists) {
             const activities = await this._collaborationsService.getCollaborationActivities(playlistId);
     
-            return {
+            return h.response({
                 status: 'success',
                 data: {
                     playlistId,
                     activities,
                 },
-            };
+            });
         } else {
             return h.response({
                 status: 'fail',
                 message: 'Playlist tidak ditemukan',
             }).code(404);
         }
+    }
+    
+    async postCollaborationActivityHandler(request, h) {
+        const { id: userId } = request.auth.credentials;
+        const { playlistId, songId, action } = request.payload;
+
+        await this.verifyPlaylistAccess(playlistId, userId);
+        await this._collaborationsService.verifyCollaborator(playlistId, userId);
+
+        await this._collaborationsService.addCollaborationActivity(playlistId, songId, userId, action);
+
+        const response = h.response({
+            status: 'success',
+            message: 'Aktivitas kolaborasi berhasil ditambahkan',
+        });
+        response.code(201);
+        return response;
+    }
+
+    async deleteCollaborationActivityHandler(request, h) {
+        const { id: userId } = request.auth.credentials;
+        const { playlistId, songId, action } = request.payload;
+
+        await this.verifyPlaylistAccess(playlistId, userId);
+        await this._collaborationsService.verifyCollaborator(playlistId, userId);
+
+        await this._collaborationsService.deleteCollaborationActivity(playlistId, songId, userId, action);
+
+        return {
+            status: 'success',
+            message: 'Aktivitas kolaborasi berhasil dihapus',
+        };
     }
 }
 
