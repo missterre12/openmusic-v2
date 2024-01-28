@@ -126,13 +126,13 @@ class PlaylistsService {
         const result = await this._pool.query(query);
     
         if (result.rows.length === 0) {
-            throw new NotFoundError('Playlist not found', 404);
+            throw new NotFoundError('Playlist not found');
         }
     
         const playlist = result.rows[0];
     
         if (playlist.owner !== owner) {
-            throw new AuthorizationError('You are not authorized to modify this playlist', 403);
+            throw new AuthorizationError('You are not authorized to modify this playlist');
         }
     }
     
