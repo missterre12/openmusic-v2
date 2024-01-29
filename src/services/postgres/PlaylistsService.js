@@ -119,19 +119,25 @@ class PlaylistsService {
 
     async verifyPlaylistOwner(playlistId, owner) {
         const query = {
-            text: 'SELECT * FROM playlists WHERE id = $1',
-            values: [playlistId],
+            text: `
+                SELECT p.owner as owner, c.user_id as user_id
+                FROM playlists p
+                LEFT JOIN collaborations c ON p.id = c.playlist_id AND c.user_id = $1
+                WHERE p.id = $2
+            `,
+            values: [owner, playlistId],
         };
     
         const result = await this._pool.query(query);
-    
         if (result.rows.length === 0) {
             throw new NotFoundError('Playlist not found');
         }
     
         const playlist = result.rows[0];
-    
-        if (playlist.owner !== owner) {
+        if (!playlist.owner) {
+            throw new NotFoundError('Playlist has no owner');
+        }
+        if (playlist.owner !== owner && playlist.user_id !== owner) {
             throw new AuthorizationError('You are not authorized to modify this playlist');
         }
     }
@@ -150,18 +156,19 @@ class PlaylistsService {
     }
 
     async verifyPlaylistAccess(playlistId, userId) {
-        const query = {
-            text: 'SELECT owner FROM playlists WHERE id = $1',
-            values: [playlistId],
-        };
-
-        const result = await this._pool.query(query);
-
-        if (result.rows.length === 0) {
-            return false;
+        try {
+            await this.verifyPlaylistOwner(playlistId, userId);
+        } catch (error) {
+            if (error instanceof NotFoundError) {
+                throw error;
+            }
+    
+            try {
+                await this._collaborationsService.verifyCollaborator(playlistId, userId);
+            } catch (error) {
+                throw error;
+            }
         }
-        const playlist = result.rows[0];
-        return playlist.owner === userId;
     }
 }
 

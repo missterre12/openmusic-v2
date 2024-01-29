@@ -60,16 +60,15 @@ class PlaylistsHandler {
         const { id: playlistId } = request.params;
         const { songId } = request.payload;
         const { id: owner } = request.auth.credentials;
-
-        await this._playlistsService.verifyPlaylistOwner(playlistId, owner);
+    
+        await this._playlistsService.verifyPlaylistAccess(playlistId, owner);
         await this._playlistsService.verifySongIsExist(songId);
         await this._playlistsService.addPlaylistsSong(playlistId, songId);
-
+    
         const userId = owner; 
         const action = 'add'; 
-        await this._collaborationsService.verifyCollaborator(playlistId, userId);
         await this._collaborationsService.addCollaborationActivity(playlistId, songId, userId, action);
-
+    
         const response = h.response({
             status: 'success',
             message: 'Playlist song berhasil ditambahkan',

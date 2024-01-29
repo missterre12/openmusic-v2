@@ -137,7 +137,6 @@ const init = async () => {
         const authErrorResponse = h.response({
           status: 'fail',
           message: response.message,
-          errorCode: 403,  
         });
         authErrorResponse.code(response.statusCode);
         return authErrorResponse;
@@ -156,7 +155,6 @@ const init = async () => {
         const notFoundResponse = h.response({
           status: 'fail',
           message: response.message,
-          errorCode: 404,
         });
         notFoundResponse.code(response.statusCode);
         return notFoundResponse;

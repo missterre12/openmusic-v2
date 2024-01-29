@@ -70,9 +70,11 @@ class CollaborationsService {
   }
 
   async addCollaborationActivity(playlistId, songId, userId, action) {
+    const id = nanoid(16);
+
     const query = {
-        text: 'INSERT INTO playlist_song_activities (playlist_id, song_id, user_id, action, time) VALUES ($1, $2, $3, $4, NOW()) RETURNING id',
-        values: [playlistId, songId, userId, action],
+        text: 'INSERT INTO playlist_song_activities (id, playlist_id, song_id, user_id, action, time) VALUES ($1, $2, $3, $4, NOW()) RETURNING id',
+        values: [id, playlistId, songId, userId, action],
     };
 
     const result = await this._pool.query(query);
