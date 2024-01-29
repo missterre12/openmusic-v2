@@ -51,21 +51,21 @@ class CollaborationsService {
 
   async getCollaborationActivities(playlistId) {
     const query = {
-        text: 'SELECT * FROM playlist_song_activities WHERE playlist_id = $1',
-        values: [playlistId],
+      text: 'SELECT * FROM playlist_song_activities WHERE playlist_id = $1',
+      values: [playlistId],
     };
 
     const result = await this._pool.query(query);
 
     if (!result.rows.length) {
-        return [];
+      return [];
     }
 
     return result.rows.map((row) => ({
-        username: row.username,
-        title: row.title,
-        action: row.action,
-        time: row.time,
+      username: row.username,
+      title: row.title,
+      action: row.action,
+      time: row.time,
     }));
   }
 
@@ -73,32 +73,31 @@ class CollaborationsService {
     const id = nanoid(16);
 
     const query = {
-        text: 'INSERT INTO playlist_song_activities (id, playlist_id, song_id, user_id, action, time) VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING id',
-        values: [id, playlistId, songId, userId, action],
+      text: 'INSERT INTO playlist_song_activities (id, playlist_id, song_id, user_id, action, time) VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING id',
+      values: [id, playlistId, songId, userId, action],
     };
 
     const result = await this._pool.query(query);
 
     if (!result.rows.length) {
-        throw new InvariantError('Aktivitas kolaborasi gagal ditambahkan');
+      throw new InvariantError('Aktivitas kolaborasi gagal ditambahkan');
     }
 
     return result.rows[0].id;
-}
+  }
 
-async deleteCollaborationActivity(playlistId, songId, userId, action) {
-  const query = {
+  async deleteCollaborationActivity(playlistId, songId, userId, action) {
+    const query = {
       text: 'DELETE FROM playlist_song_activities WHERE playlist_id = $1 AND song_id = $2 AND user_id = $3 AND action = $4 RETURNING id',
       values: [playlistId, songId, userId, action],
-  };
+    };
 
-  const result = await this._pool.query(query);
+    const result = await this._pool.query(query);
 
-  if (!result.rows.length) {
+    if (!result.rows.length) {
       throw new InvariantError('Aktivitas kolaborasi gagal dihapus');
+    }
   }
-}
-
 }
 
 module.exports = CollaborationsService;
