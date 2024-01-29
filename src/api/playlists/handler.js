@@ -98,20 +98,25 @@ class PlaylistsHandler {
         const { id: playlistId } = request.params;
         const { songId } = request.payload;
         const { id: owner } = request.auth.credentials;
-
-        await this._playlistsService.verifyPlaylistOwner(playlistId, owner);
+    
+        await this._playlistsService.verifyPlaylistAccess(playlistId, owner);
         await this._playlistsService.deletePlaylistSongById(playlistId, songId);
+    
+        const userId = owner;
+        const action = "delete";
+        await this._collaborationsService.addCollaborationActivity(
+          playlistId,
+          songId,
+          userId,
+          action
 
-        const userId = owner; 
-        const action = 'delete'; 
-        await this._collaborationsService.verifyCollaborator(playlistId, userId);
-        await this._collaborationsService.deleteCollaborationActivity(playlistId, songId, userId, action);
-
+        );
+    
         return {
-            status: 'success',
-            message: 'Playlist song berhasil dihapus',
-        };
-    }
+          status: "success",
+          message: "Playlist song berhasil dihapus",
+        };
+      } 
 }
 
 module.exports = PlaylistsHandler;

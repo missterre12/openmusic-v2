@@ -133,15 +133,6 @@ const init = async () => {
     console.log(response);
 
     if (response instanceof Error) {
-      if (response instanceof AuthorizationError) {
-        const authErrorResponse = h.response({
-          status: 'fail',
-          message: response.message,
-        });
-        authErrorResponse.code(response.statusCode);
-        return authErrorResponse;
-      }
-      
       if (response instanceof ClientError) {
         const newResponse = h.response({
           status: 'fail',
@@ -149,33 +140,6 @@ const init = async () => {
         });
         newResponse.code(response.statusCode);
         return newResponse;
-      }
-  
-      if (response instanceof NotFoundError) {
-        const notFoundResponse = h.response({
-          status: 'fail',
-          message: response.message,
-        });
-        notFoundResponse.code(response.statusCode);
-        return notFoundResponse;
-      }
-
-      if (response instanceof AuthenticationError) {
-        const authErrorResponse = h.response({
-          status: 'fail',
-          message: response.message,
-        });
-        authErrorResponse.code(response.statusCode);
-        return authErrorResponse;
-      }
-
-      if (response instanceof InvariantError) {
-        const invariantErrorResponse = h.response({
-          status: 'fail',
-          message: response.message,
-        });
-        invariantErrorResponse.code(response.statusCode);
-        return invariantErrorResponse;
       }
 
       if (!response.isServer) {
@@ -192,7 +156,6 @@ const init = async () => {
 
     return h.continue;
   });
-
   await server.start();
   console.log(`Server berjalan pada ${server.info.uri}`);
 };

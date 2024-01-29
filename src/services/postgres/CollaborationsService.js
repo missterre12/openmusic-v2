@@ -73,7 +73,7 @@ class CollaborationsService {
     const id = nanoid(16);
 
     const query = {
-        text: 'INSERT INTO playlist_song_activities (id, playlist_id, song_id, user_id, action, time) VALUES ($1, $2, $3, $4, NOW()) RETURNING id',
+        text: 'INSERT INTO playlist_song_activities (id, playlist_id, song_id, user_id, action, time) VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING id',
         values: [id, playlistId, songId, userId, action],
     };
 

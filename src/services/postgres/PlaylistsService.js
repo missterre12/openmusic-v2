@@ -159,7 +159,7 @@ class PlaylistsService {
         try {
             await this.verifyPlaylistOwner(playlistId, userId);
         } catch (error) {
-            if (error instanceof NotFoundError) {
+            if (!(error instanceof NotFoundError)) {
                 throw error;
             }
     
@@ -170,6 +170,6 @@ class PlaylistsService {
             }
         }
     }
-}
+} 
 
 module.exports = PlaylistsService;
