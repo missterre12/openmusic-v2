@@ -126,16 +126,16 @@ class SongsHandler {
 
     if (songId === null) {
       const response = h.response({
-          status: 'fail',
-          message: 'Lagu tidak ditemukan',
+        status: 'fail',
+        message: 'Lagu tidak ditemukan',
       });
       response.code(404);
       return response;
     }
 
     const successResponse = h.response({
-        status: 'success',
-        message: 'Lagu berhasil dihapus',
+      status: 'success',
+      message: 'Lagu berhasil dihapus',
     });
     successResponse.code(200);
     return successResponse;
